@@ -1,52 +1,41 @@
 import streamlit as st
 import requests
 
-# --- הגדרות בסיסיות ---
 AZURE_API_URL = "https://priority-chatbot-app-hxcgddgfbvgzczay.israelcentral-01.azurewebsites.net/ask"
 
 st.set_page_config(page_title="Yaniv AI", layout="centered")
 
-# --- עיצוב CSS ---
+# עיצוב CSS מתוקן (בתוך מחרוזת טקסט כדי למנוע SyntaxError)
+st.markdown("""
 <style>
-    .stChatMessage {
-        border-radius: 20px !important;
-        padding: 15px !important;
-        margin-bottom: 10px !important;
-        max-width: 85% !important;
+    @import url('https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;700&display=swap');
+    html, body, [class*="st-"] { font-family: 'Assistant', sans-serif; direction: rtl; text-align: right; }
+    .stApp { background-color: #ffffff; }
+    
+    /* לוגו בקופסה שחורה */
+    .logo-container {
+        display: flex; justify-content: center; background-color: #000000;
+        padding: 20px; border-radius: 15px; margin-bottom: 20px;
     }
     
-    /* הודעת משתמש - יישור לשמאל וצבע אפור בהיר */
-    [data-testid="stChatMessageUser"] {
-        background-color: #f1f5f9 !important;
-        margin-right: auto !important;
-        border-bottom-left-radius: 2px !important;
-    }
-
-    /* הודעת AI - יישור לימין וצבע כחול-לבן עם פס ירוק */
-    [data-testid="stChatMessageAssistant"] {
-        background-color: #ffffff !important;
-        border-right: 4px solid #8cc63f !important;
-        margin-left: auto !important;
-        border-bottom-right-radius: 2px !important;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.05) !important;
-    }
+    /* בועות צ'אט מעוצבות */
+    .stChatMessage { border-radius: 20px !important; border: 1px solid #eee !important; }
+    [data-testid="stChatMessageAssistant"] { border-right: 5px solid #8cc63f !important; background-color: #fafafa !important; }
     
-    /* העלמת האייקונים הגנריים */
-    [data-testid="stChatIconAssistant"], [data-testid="stChatIconUser"] {
-        display: none;
-    }
-    </style>
-    """, unsafe_allow_html=True)
+    .stChatInput button { background-color: #8cc63f !important; }
+    #MainMenu, footer, header {visibility: hidden;}
+</style>
+""", unsafe_allow_html=True)
 
-# --- תצוגת לוגו ---
-st.markdown('<div class="logo-box">', unsafe_allow_html=True)
+# תצוגת לוגו
+st.markdown('<div class="logo-container">', unsafe_allow_html=True)
 try:
     st.image("LOGOY.gif", width=250)
 except:
     st.header("YANIV GROUP")
 st.markdown('</div>', unsafe_allow_html=True)
 
-st.markdown('<h1 class="main-title">במה אוכל לעזור היום?</h1>', unsafe_allow_html=True)
+st.markdown('<h2 style="text-align:center; color:#1e3a8a;">במה אוכל לעזור היום?</h2>', unsafe_allow_html=True)
 
 if "messages" not in st.session_state:
     st.session_state.messages = []
@@ -55,24 +44,17 @@ for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
 
-if prompt := st.chat_input("שאל אותי משהו..."):
+if prompt := st.chat_input("שאל על הזמנות, פרויקטים או סכומים..."):
     st.session_state.messages.append({"role": "user", "content": prompt})
     with st.chat_message("user"):
         st.markdown(prompt)
 
     with st.chat_message("assistant"):
-        with st.spinner("בודק בפריוריטי..."):
+        with st.spinner("מתחבר לפריוריטי..."):
             try:
-                # הגדלנו את ה-timeout ל-60 שניות כי פריוריטי לפעמים איטית
                 r = requests.post(AZURE_API_URL, json={"message": prompt}, timeout=60)
-                if r.status_code == 200:
-                    res = r.json().get("response", "התקבלה תשובה ריקה מהשרת.")
-                else:
-                    res = f"שגיאה מהשרת ב-Azure (קוד: {r.status_code})"
-            except Exception as e:
-                res = f"שגיאת חיבור לשרת: {str(e)}"
-            
+                res = r.json().get("response", "אין תשובה מהשרת.")
+            except:
+                res = "שגיאת חיבור לשרת. וודא שה-Azure פועל."
             st.markdown(res)
             st.session_state.messages.append({"role": "assistant", "content": res})
-
-
