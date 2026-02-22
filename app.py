@@ -7,23 +7,35 @@ AZURE_API_URL = "https://priority-chatbot-app-hxcgddgfbvgzczay.israelcentral-01.
 st.set_page_config(page_title="Yaniv AI", layout="centered")
 
 # --- עיצוב CSS ---
-st.markdown("""
-    <style>
-    @import url('https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;700&display=swap');
-    html, body, [class*="st-"] { font-family: 'Assistant', sans-serif; direction: rtl; }
-    .stApp { background-color: #ffffff; }
-    .logo-box {
-        display: flex;
-        justify-content: center;
-        background-color: #000000;
-        padding: 15px;
-        border-radius: 10px;
-        margin-bottom: 20px;
+<style>
+    /* עיצוב בועות הצ'אט */
+    .stChatMessage {
+        border-radius: 20px !important;
+        padding: 15px !important;
+        margin-bottom: 10px !important;
+        max-width: 85% !important;
     }
-    .main-title { color: #1e3a8a; text-align: center; font-weight: 700; font-size: 2.2rem; }
-    .stChatMessage { background-color: #f1f5f9 !important; border-radius: 15px !important; }
-    .stChatInput button { background-color: #8cc63f !important; }
-    #MainMenu, footer, header {visibility: hidden;}
+    
+    /* הודעת משתמש - יישור לשמאל וצבע אפור בהיר */
+    [data-testid="stChatMessageUser"] {
+        background-color: #f1f5f9 !important;
+        margin-right: auto !important;
+        border-bottom-left-radius: 2px !important;
+    }
+
+    /* הודעת AI - יישור לימין וצבע כחול-לבן עם פס ירוק */
+    [data-testid="stChatMessageAssistant"] {
+        background-color: #ffffff !important;
+        border-right: 4px solid #8cc63f !important;
+        margin-left: auto !important;
+        border-bottom-right-radius: 2px !important;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05) !important;
+    }
+    
+    /* העלמת האייקונים הגנריים */
+    [data-testid="stChatIconAssistant"], [data-testid="stChatIconUser"] {
+        display: none;
+    }
     </style>
     """, unsafe_allow_html=True)
 
@@ -63,3 +75,4 @@ if prompt := st.chat_input("שאל אותי משהו..."):
             
             st.markdown(res)
             st.session_state.messages.append({"role": "assistant", "content": res})
+
