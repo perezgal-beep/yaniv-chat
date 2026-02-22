@@ -8,7 +8,6 @@ st.set_page_config(page_title="Yaniv AI", layout="centered")
 
 # --- עיצוב CSS ---
 <style>
-    /* עיצוב בועות הצ'אט */
     .stChatMessage {
         border-radius: 20px !important;
         padding: 15px !important;
@@ -75,4 +74,5 @@ if prompt := st.chat_input("שאל אותי משהו..."):
             
             st.markdown(res)
             st.session_state.messages.append({"role": "assistant", "content": res})
+
 
