@@ -5,7 +5,6 @@ AZURE_API_URL = "https://priority-chatbot-app-hxcgddgfbvgzczay.israelcentral-01.
 
 st.set_page_config(page_title="Yaniv AI", layout="centered")
 
-# עיצוב נקי ללא שגיאות
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Assistant:wght@400;700&display=swap');
@@ -31,13 +30,13 @@ for m in st.session_state.messages:
     with st.chat_message(m["role"]):
         st.markdown(m["content"])
 
-if prompt := st.chat_input("שאל אותי על נתוני 2026..."):
+if prompt := st.chat_input("שאל אותי על הזמנות 2026..."):
     st.session_state.messages.append({"role": "user", "content": prompt})
     with st.chat_message("user"):
         st.markdown(prompt)
 
     with st.chat_message("assistant"):
-        with st.spinner("מעבד נתונים..."):
+        with st.spinner("מושך נתונים מפריוריטי..."):
             try:
                 r = requests.post(AZURE_API_URL, json={"message": prompt}, timeout=60)
                 res = r.json().get("response", "אין תשובה.")
